@@ -1,8 +1,17 @@
+from json import loads
 from app import app, mongo
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 from flask import jsonify, flash, request
 from werkzeug.security import generate_password_hash, check_password_hash
+from User import User
+
+
+
+
+
+
+
 
 @app.route('/testapi')
 def testapi():
@@ -12,6 +21,39 @@ def testapi():
 @app.route('/weather/<city>',methods=['GET'])
 def weatherbycity(city):
 	return city
+
+@app.route('/weather2/<lat>/and/<lon>',methods=['GET'])
+def weatherbylatandlon(lat,lon):
+	print(lat,lon)
+	return "yeah"
+
+@app.route('/forecast/<city>',methods=['GET'])
+def weatherforecast1(city):
+	return city
+
+@app.route('/forecast2/<lat>/and/<lon>',methods=['GET'])
+def weatherforecast2(lat,lon):
+	return lon
+
+
+@app.route('/login',methods=['POST'])
+def log_in():
+	_json = request.json
+	_email = _json['email']
+	_password = _json['pwd']
+	user = mongo.db.user.find_one({'email': _email})
+
+	res:User = loads(dumps(user))
+	
+	x=check_password_hash(res["pwd"],_password)
+	print(x)
+	if x:
+		return res
+	
+	return "wrong password"
+	
+
+
 
 @app.route('/users',methods=['GET'])
 def users():
@@ -82,4 +124,5 @@ def not_found(error=None):
     return resp
 
 if __name__ == "__main__":
-    app.run()
+	
+    app.run(port=5002)
