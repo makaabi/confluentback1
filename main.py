@@ -1,4 +1,6 @@
 from json import loads
+import requests
+
 from app import app, mongo
 from bson.json_util import dumps
 from bson.objectid import ObjectId
@@ -9,31 +11,17 @@ from User import User
 
 
 
-
-
-
-
 @app.route('/testapi')
 def testapi():
-	return "API Working"
+		return requests.get('http://127.0.0.1:5000/testapi').text
 
 
-@app.route('/weather/<city>',methods=['GET'])
-def weatherbycity(city):
-	
-	return city
+@app.route('/weather/<lat>/<lon>',methods=['GET'])
+def weatherby(lat,lon):
+	return requests.get('http://127.0.0.1:5000/weather/?lat='+lat+'&lon='+lon).text
 
-@app.route('/weather2/<lat>/and/<lon>',methods=['GET'])
-def weatherbylatandlon(lat,lon):
-	print(lat,lon)
-	return "yeah"
-
-@app.route('/forecast/<city>',methods=['GET'])
-def weatherforecast1(city):
-	return city
-
-@app.route('/forecast2/<lat>/and/<lon>',methods=['GET'])
-def weatherforecast2(lat,lon):
+@app.route('/forecast/<lat>/<lon>',methods=['GET'])
+def weatherforecast(lat,lon):
 	return lon
 
 
@@ -86,6 +74,7 @@ def add_user():
 def user(id):
 	user = mongo.db.user.find_one({'_id': ObjectId(id)})
 	resp = dumps(user)
+
 	return resp
 
 @app.route('/user/update', methods=['PUT'])
