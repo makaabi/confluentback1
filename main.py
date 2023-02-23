@@ -20,6 +20,7 @@ def testapi():
 
 @app.route('/weather/<city>',methods=['GET'])
 def weatherbycity(city):
+	
 	return city
 
 @app.route('/weather2/<lat>/and/<lon>',methods=['GET'])
